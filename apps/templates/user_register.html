@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ page_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/reset.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/common.css') }}"/>
+</head>
+<body>
+<div class="wrap login_wrap">
+    <div class="content">
+
+        <div class="logo"></div>
+
+        <div class="login_box">
+
+            <div class="login_form">
+                <div class="login_title">
+                    {{ page_name }}
+                </div>
+                <form action="" method="post">
+                    {% for foo in form %}
+                        <div class="form_text_ipt">
+                            {{ foo }}
+                        </div>
+                        <div class="ececk_warning"><span>{{ foo.errors[0] }}</span></div>
+                    {% endfor %}
+                    <div class="form_btn">
+                        <input type="submit" id="submit" class="form_btn" value="确认注册">
+                    </div>
+                    <div class="form_reg_btn">
+                        <span>{{ stat }}帐号？</span><a href="{{ link }}">{{ atonce }}</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static',filename='js/common.js') }}"></script>
+</body>
+</html>
