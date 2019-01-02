@@ -1,0 +1,16 @@
+{% extends 'base_end.html' %}
+{% block context %}
+    <form action="" method="post">
+        <div class="page-header"><h3>商家菜品{{ page_context }}</h3></div>
+        {% for foo in form %}
+            <div class="form-group" style="text-align: right;">
+                <label class="col-sm-3 control-label" style="margin-top: 15px;">{{ foo.label }}</label>
+                <div class="col-sm-9" style="margin-top: 15px;">{{ foo }}<span
+                        class="text-danger">{{ foo.errors[0] }}</span>
+                </div>
+            </div>
+        {% endfor %}
+        <input type="submit" class="btn btn-primary btn-lg" style="padding: 10px 50px;margin-top: 30px"
+               value="{{ page_context }}菜品">
+    </form>
+{% endblock %}

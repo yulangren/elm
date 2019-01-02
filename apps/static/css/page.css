@@ -1,0 +1,127 @@
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+.left {
+    background: #313541;
+    width: 17%;
+    float: left;
+    position: absolute;
+    min-width: 200px;
+    height: 650px;
+    font-size: 16px;
+}
+
+.left a:link {
+    text-decoration: none;
+}
+
+.left a:active {
+    color: #707783;
+}
+
+.left a:visited {
+    color: #707783
+}
+
+.left a:hover {
+    color: #FFF;
+}
+
+.top {
+    width: 83%;
+    float: right;
+    height: 80px;
+    line-height: 80px;
+    border-bottom: 1px solid #b0cdff;
+    min-width: 900px;
+}
+
+.content {
+    float: right;
+    width: 83%;
+
+    margin-top: 20px;
+    min-width: 900px;
+
+}
+
+.leftTiyle {
+    font-size: 25px;
+    padding-left: 30px;
+    font-weight: 600;
+    color: #545454;
+    float: left;
+}
+
+.thisUser {
+    float: right;
+    margin-right: 30px;
+}
+
+.bigTitle {
+    background: #3d598a;
+    color: #fff;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    font-size: 24px;
+    font-family: -webkit-body;
+}
+
+.lines .active {
+    background: #272a34;
+    color: #fff;
+}
+
+.lines img {
+    width: 23px;
+    vertical-align: middle;
+    margin-bottom: 4px;
+    margin-right: 9px;
+}
+
+.lines div {
+    height: 70px;
+    line-height: 70px;
+    padding-left: 50px;
+    color: #707783;
+}
+
+.lines div:hover {
+    cursor: pointer;
+    color: #FFF;
+    background: #272a34;
+}
+
+.file {
+    position: relative;
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 4px 12px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+    width: 100px;
+}
+
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+
+.file:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none;
+}
+

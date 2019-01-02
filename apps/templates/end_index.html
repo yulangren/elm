@@ -1,0 +1,48 @@
+{% extends 'base_end.html' %}
+{% block context %}
+    <div class="panel panel-default">
+        <div class="panel-heading" style="text-align: left;">
+            <strong class="text-danger">{{ current_user.username }}</strong> 的店铺：
+        </div>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>店铺名称</th>
+                <th>店铺评分</th>
+                <th>起送价格</th>
+                <th>配送费</th>
+                <th>菜品分类</th>
+                <th>菜品信息</th>
+            </tr>
+            </thead>
+            <!-- 遍历渲染 -->
+            <tbody>
+            {% for shop in shops %}
+                <tr>
+                    <th>{{ shop.id }}</th>
+                    <th>
+                        <a href="/update_shop/{{ shop.id }}">{{ shop.shop_name }}</a>
+                    </th>
+                    <th>{{ shop.shop_rating }}</th>
+                    <th>￥ {{ shop.start_send }}</th>
+                    <th>￥ {{ shop.send_cost }}</th>
+                    <th>
+                        <a href="/add_cate/">添加</a>
+                        &nbsp;&nbsp;
+                        <a href="">查看</a>
+                    </th>
+                    <th>
+                        <a href="/add_food/">添加</a>
+                        &nbsp;&nbsp;
+                        <a href="">查看</a>
+                    </th>
+                </tr>
+            {% endfor %}
+
+
+            </tbody>
+
+        </table>
+    </div>
+{% endblock %}

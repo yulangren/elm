@@ -4,10 +4,10 @@
 # @Author: 余浪人
 # @email: yulangren520@gmail.com
 # @Company:
-import serializers as serializers
-from wtforms import Form, StringField, PasswordField, validators, ValidationError
 
-from apps.models.merchant_model import MerchantUser
+from wtforms import Form, StringField, PasswordField, validators
+
+from apps.models.merchant_model import Merchant_User_Model
 
 
 class Login_Form(Form):
@@ -33,6 +33,6 @@ class Business_reg(Login_Form):
                               )
 
     def validate_username(self, _):
-        cou = MerchantUser.query.filter(MerchantUser.username == self.username.data).count()
+        cou = Merchant_User_Model.query.filter(Merchant_User_Model.username == self.username.data).count()
         if cou:
             raise validators.ValidationError("手机号/用户名已存在!")
