@@ -4,8 +4,8 @@
 # @Author: 余浪人
 # @email: yulangren520@gmail.com
 
-from flask_login import LoginManager
 
+from flask_login import LoginManager
 from apps.models.merchant_model import Merchant_User_Model
 
 login_manager = LoginManager()

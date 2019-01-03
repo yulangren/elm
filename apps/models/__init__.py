@@ -30,6 +30,10 @@ class BaseModel(db.Model):
                 else:  # 对密码进行加密
                     setattr(self, k, set_password(v))
 
+    # 强转字典
+    def __getitem__(self, item):
+        if hasattr(self, item):
+            return getattr(self, item)
 
 # 导入自定义数据模型
 from apps.models import merchant_model

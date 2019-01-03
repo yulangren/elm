@@ -1,0 +1,35 @@
+{% extends 'base_end.html' %}
+{% block context %}
+    <div class="page-header"><h3>菜品明细</h3></div>
+    <div class="panel panel-default">
+        <div class="panel-heading" style="text-align: left;">
+            <strong class="text-danger">{{ shop_name }}</strong> 的菜单清单：
+        </div>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>菜品名称</th>
+                <th>菜品价格</th>
+                <th>菜品销量</th>
+                <th>菜品评分</th>
+                <th>菜品操作</th>
+
+            </tr>
+            </thead>
+            <!-- 遍历渲染 -->
+            <tbody>
+            {% for show in show_detail %}
+                <tr>
+                    <th>{{ show.id }}</th>
+                    <th>{{ show.goods_name }}</th>
+                    <th>{{ show.goods_price }}</th>
+                    <th>销量</th>
+                    <th> {{ show.rating }}</th>
+                    <th><a href="{{ url_for('cms_bp.update_food',id=show.id) }}">编辑</a></th>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

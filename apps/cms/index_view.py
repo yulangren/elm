@@ -3,16 +3,18 @@
 # @Time: 2018/12/29  22:31
 # @Author: 余浪人
 # @email: yulangren520@gmail.com
-import json
-import uuid
+
 from apps.cms import cms_bp
-from flask import request, render_template, redirect, url_for, flash
+from flask import request, render_template, redirect, url_for
 from apps.forms.form import Business_reg, Login_Form
+from apps.libs.checks import check_shop
+from apps.libs.get_shop_uuid import get_shopUuid
 from apps.models import db
 from apps.models.merchant_model import Merchant_User_Model, Shop_Model, Dishes_Class_Model, Dishes_Detail_Model
 from apps.cms.verify_view import check_password
 from apps.forms.shop_form import Shop_Form, Dishes_Class_Form, Dishes_Detail_Form
 from flask_login import login_user, login_required, logout_user, current_user
+from apps.libs.get_uuid import get_uuid
 
 
 # 商家用户注册
@@ -40,16 +42,16 @@ def login():
             return redirect(url_for(endpoint='.reg_user'))
         else:
             if check_password(user.password, password=form.password.data):
-                print()
                 login_user(user)
                 return redirect(url_for(endpoint='.end_index'))
-            form.password.errors='密码错误!'
+            else:
+                form.password.errors = ('密码错误!',)
     return render_template('user_register.html', form=form, page_name='登录',
                            stat='没有', atonce='马上注册', link=url_for(endpoint='.reg_user'))
 
 
 # # 商家用户注销登陆
-@cms_bp.route('/logout')
+@cms_bp.route('/logout', endpoint='logout')
 @login_required
 def logout():
     logout_user()
@@ -76,20 +78,28 @@ def add_shop():
         merchant = Shop_Model()
         merchant.set_attr(form.data)
         merchant.seller_id = current_user.id  # 当前用户的id
-        merchant.pub_id = uuid.uuid4().time_low
+        merchant.pub_id = get_uuid()
         db.session.add(merchant)
         db.session.commit()
         return redirect(url_for(endpoint='.end_index'))
     return render_template('add_shop.html', form=form, page_context='添加')
 
 
-@cms_bp.route('/update_shop/<int:id>')
+@cms_bp.route('/update_shop/<update_shop_id>', endpoint='update_shop', methods=['GET', 'POST'])
 @login_required
-def update_shop(id):
-    # 查询数据准备回显数据
-    data = Shop_Model.query.filter_by(id=id, seller_id=current_user.id).first()
-    data_s = Shop_Form()
-    return render_template('add_shop.html', form=data_s, page_context='更新')
+def update_shop(update_shop_id):
+    # 查询数据准备
+    shop = Shop_Model.query.filter_by(pub_id=update_shop_id, seller_id=current_user.id).first()
+    # 验证是否存在,输入舒服非法
+    check_shop(shop)
+    form = Shop_Form(request.form)
+    if request.method == "POST" and form.validate():
+        shop.set_attr(form.data)
+        db.session.commit()
+        return redirect(url_for(endpoint='.end_index'))
+    else:
+        form = Shop_Form(data=dict(shop))  # 回显数据
+    return render_template('add_shop.html', form=form, page_context='更新')
 
 
 # 添加分类(登录后可见)
@@ -97,16 +107,44 @@ def update_shop(id):
 @login_required
 def add_cate():
     form = Dishes_Class_Form(request.form)
-    if request.method == "POST" and form.validate():
+    if request.method == "POST":
         dishes_class = Dishes_Class_Model()
         dishes_class.set_attr(form.data)
         dishes_class.merchant_id = current_user.id  # 当前商家
+        dishes_class.category_id = get_uuid()
         db.session.add(dishes_class)
         db.session.commit()
         return redirect(url_for(endpoint='.end_index'))  # 添加成功,跳转至显示列表页
-    result = db.session.query(Shop_Model).filter(Shop_Model.seller_id == current_user.id, ).all()
+    result = db.session.query(Shop_Model).filter(Shop_Model.seller_id == current_user.id).all()
     form.shop_id.choices += [(r.id, r.shop_name) for r in result]
     return render_template('add_cate.html', form=form, page_context='添加')
+
+
+@cms_bp.route('/show_cate/<shop_uuid>', endpoint='show_cate')
+def show_cate(shop_uuid):
+    shop_id = Shop_Model.query.filter_by(pub_id=shop_uuid, seller_id=current_user.id).first()  # 获取 店铺
+    cate_data = Dishes_Class_Model.query.filter(Dishes_Class_Model.shop_id == shop_id.id).all()  # 获取分类
+    return render_template('show_cate.html', cate_data=cate_data, shop_name=shop_id, cout=len(cate_data))
+
+
+@cms_bp.route('/update_cate/<class_uuid>', endpoint='update_cate', methods=['GET', 'POST'])
+@login_required
+def update_cate(class_uuid):
+    # 查询数据准备
+    cate = Dishes_Class_Model.query.filter_by(category_id=class_uuid, merchant_id=current_user.id).first()
+    # 验证是否存在,输入是否非法
+    check_shop(cate)
+    form = Dishes_Class_Form(request.form)
+    if request.method == "POST":
+        cate.set_attr(form.data)
+        db.session.commit()
+        return redirect(url_for(endpoint='cms_bp.show_cate', shop_uuid=Shop_Model.query.filter_by(
+            id=Dishes_Class_Model.query.filter_by(category_id=class_uuid).first().shop_id).first().pub_id))
+    else:
+        form = Dishes_Class_Form(data=dict(cate))  # 回显数据
+        result = db.session.query(Shop_Model).filter(Shop_Model.seller_id == current_user.id)
+        form.shop_id.choices += [(r.id, r.shop_name) for r in result]
+    return render_template('add_cate.html', form=form)
 
 
 # 添加菜品
@@ -117,8 +155,39 @@ def add_food():
     if request.method == "POST":
         dishes_detail = Dishes_Detail_Model()
         dishes_detail.set_attr(form.data)
-        dishes_detail.shop_id = current_user.id
-        return '添加成功'
-    result = db.session.query(Dishes_Class_Model).filter(Dishes_Class_Model.merchant_id == current_user.id, )
+        dishes_detail.merchant_id = current_user.id
+        dishes_detail.shop_id = get_shopUuid(form.category_id.data)
+        db.session.add(dishes_detail)
+        db.session.commit()
+        return redirect(url_for(endpoint='cms_bp.show_food', shop_uuid=get_shopUuid(form.category_id.data)))
+    result = Dishes_Class_Model.query.filter(Dishes_Class_Model.merchant_id == current_user.id).all()
     form.category_id.choices += [(r.id, r.name) for r in result]
     return render_template('add_food.html', form=form, page_context='添加')
+
+
+@cms_bp.route('/show_food/<shop_uuid>', endpoint='show_food')
+@login_required
+def show_food(shop_uuid):
+    show_detail = Dishes_Detail_Model.query.filter(Dishes_Detail_Model.shop_id == shop_uuid).all()
+    shop_name = Shop_Model.query.filter_by(pub_id=shop_uuid).first().shop_name
+    return render_template('show_food.html', show_detail=show_detail, shop_name=shop_name)
+
+
+@cms_bp.route('/update_food/<id>', endpoint='update_food', methods=['GET', 'POST'])
+@login_required
+def update_food(id):
+    # 查询数据准备
+    food = Dishes_Detail_Model.query.filter_by(id=id, merchant_id=current_user.id).first()
+    # 验证是否存在,输入舒服非法
+    check_shop(food)
+    form = Dishes_Detail_Form(request.form)
+    if request.method == "POST":
+        food.set_attr(form.data)
+        food.shop_id = get_shopUuid(form.category_id.data)
+        db.session.commit()
+        return redirect(url_for(endpoint='.show_food', shop_uuid=get_shopUuid(form.category_id.data)))
+    else:
+        form = Dishes_Detail_Form(data=dict(food))  # 回显数据
+        result = db.session.query(Dishes_Class_Model).filter(Dishes_Class_Model.merchant_id == current_user.id).all()
+        form.category_id.choices += [(r.id, r.name) for r in result]
+    return render_template('add_food.html', form=form, page_context='更新')

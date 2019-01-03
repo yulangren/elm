@@ -4,9 +4,10 @@
 # @Author: 余浪人
 # @email: yulangren520@gmail.com
 # @Company:
-from flask_login import UserMixin
+
 
 from apps.models import db, BaseModel
+from flask_login import UserMixin
 
 
 # 商家数据模型
@@ -41,26 +42,34 @@ class Shop_Model(BaseModel):
     def __repr__(self):
         return f'店铺名称: {self.shop_name}'
 
+    def keys(self):
+        return 'shop_name', 'shop_img', 'brand', 'on_time', 'hummingbird', 'protect', 'ticket', 'standard', 'start_send', 'send_cost', 'notice', 'discount'
+
 
 # 菜品分类模型
 class Dishes_Class_Model(BaseModel):
     name = db.Column(db.String(length=16), comment='名称')
-    merchant_id = db.Column(db.INT, comment='所属商家ID号')
     type_accumulation = db.Column(db.String(length=50), comment='菜品编号')
+    merchant_id = db.Column(db.INT, comment='所属商家ID')
     shop_id = db.Column(db.INT, comment='所属店铺ID')
     description = db.Column(db.String(length=250), comment='描述')
     is_default = db.Column(db.Boolean, default=False, comment='是否是默认分类')
+    category_id = db.Column(db.String(16), comment='分类UUID')
 
     def __repr__(self):
         return f'菜品分类: {self.name}'
+
+    def keys(self):
+        return 'name', 'type_accumulation', 'shop_id', 'description', 'is_default'
 
 
 # 菜品详细模型
 class Dishes_Detail_Model(BaseModel):
     goods_name = db.Column(db.String(length=16), comment='名称')
+    merchant_id = db.Column(db.INT, comment='所属商家ID')
     rating = db.Column(db.Float, default=5.0, comment='评分')
-    shop_id = db.Column(db.INT, comment='所属商家ID')
-    category_id = db.Column(db.INT, comment='所属分类ID')
+    shop_id = db.Column(db.String(16), comment='所属店铺ID')
+    category_id = db.Column(db.String(16), comment='所属分类ID')
     goods_price = db.Column(db.Float, comment='价格')
     description = db.Column(db.String(length=250), comment='描述')
     month_sales = db.Column(db.Integer, default=0, comment='月销量')
@@ -72,3 +81,6 @@ class Dishes_Detail_Model(BaseModel):
 
     def __repr__(self):
         return f'菜品详细: {self.goods_name}'
+
+    def keys(self):
+        return 'goods_name', 'merchant_id', 'shop_id', 'goods_price', 'tips', 'description', 'goods_img', 'category_id'

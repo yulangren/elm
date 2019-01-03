@@ -1,0 +1,38 @@
+{% extends 'base_end.html' %}
+{% block context %}
+    <div class="page-header"><h3>菜单分类</h3></div>
+    <div class="panel panel-default">
+        <div class="panel-heading" style="text-align: left;">
+            <strong class="text-danger">{{ shop_name.shop_name }}</strong> 菜单分类：
+        </div>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>分类名称</th>
+                <th>菜品信息</th>
+                <th>平均价钱</th>
+                <th>添加时间</th>
+
+            </tr>
+            </thead>
+            <!-- 遍历渲染 -->
+            <tbody>
+            {% for data in cate_data %}
+                <tr>
+                    <th>{{ data.id }}</th>
+                    <th>
+                        <a href="{{ url_for('.update_cate',class_uuid=data.category_id) }}">{{ data.name }}</a>
+                    </th>
+                    <th><a href="{{ url_for('cms_bp.add_food') }}">添加</a> &nbsp;&nbsp;<span class="badge">{{ cout }}</span></th>
+                    <th> 0.00</th>
+                    <th> {{ data.create_time }}</th>
+                </tr>
+            {% endfor %}
+
+
+            </tbody>
+
+        </table>
+    </div>
+{% endblock %}

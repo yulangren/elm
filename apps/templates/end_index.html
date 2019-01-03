@@ -22,20 +22,20 @@
                 <tr>
                     <th>{{ shop.id }}</th>
                     <th>
-                        <a href="/update_shop/{{ shop.id }}">{{ shop.shop_name }}</a>
+                        <a href="{{url_for('cms_bp.update_shop',update_shop_id=shop.pub_id) }}">{{ shop.shop_name }}</a>
                     </th>
                     <th>{{ shop.shop_rating }}</th>
                     <th>￥ {{ shop.start_send }}</th>
                     <th>￥ {{ shop.send_cost }}</th>
                     <th>
-                        <a href="/add_cate/">添加</a>
+                        <a href="{{ url_for('cms_bp.add_cate') }}">添加</a>
                         &nbsp;&nbsp;
-                        <a href="">查看</a>
+                        <a href="{{ url_for('cms_bp.show_cate',shop_uuid=shop.pub_id) }}">查看</a>
                     </th>
                     <th>
-                        <a href="/add_food/">添加</a>
+                        <a href="{{ url_for('cms_bp.add_food') }}">添加</a>
                         &nbsp;&nbsp;
-                        <a href="">查看</a>
+                        <a href="{{ url_for('cms_bp.show_food',shop_uuid=shop.pub_id) }}">查看</a>
                     </th>
                 </tr>
             {% endfor %}

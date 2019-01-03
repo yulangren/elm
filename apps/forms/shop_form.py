@@ -30,11 +30,13 @@ class Shop_Form(Form):
     discount = StringField(label='优惠信息', render_kw={"placeholder": "请输入优惠信息", "class": "form-control"})
     shop_img = FileField(label='店铺图片', render_kw={"class": "btn "})
 
-    def validate_shop_name(self, object):
-        cou = Shop_Model.query.filter(Shop_Model.shop_name == self.shop_name.data).count()
-        print(cou)
-        if cou:
-            raise validators.ValidationError("店铺名不可重复!")
+    # def validate_shop_name(self, object):
+    #     cou = Shop_Model.query.filter(Shop_Model.shop_name == self.shop_name.data).count()
+    #     print(cou)
+    #     if cou:
+    #         raise validators.ValidationError("店铺名不可重复!")
+
+
 
 
 # 菜品分类模型
@@ -42,7 +44,8 @@ class Dishes_Class_Form(Form):
     shop_id = SelectField(label='店铺分类', choices=[('default', '请选择'), ], render_kw={"class": "form-control"})
     name = StringField(label='菜品分类名称', validators=[
         validators.DataRequired(message='请输入菜品分类名'),
-        validators.length(min=1, message='菜品分类名长度不符'),], render_kw={"placeholder": "请输入菜品分类名", "class": "form-control"})
+        validators.length(min=1, message='菜品分类名长度不符'), ],
+                       render_kw={"placeholder": "请输入菜品分类名", "class": "form-control"})
     description = StringField(label='菜品分类描述', render_kw={"placeholder": "请输入菜品分类描述", "class": "form-control"})
     type_accumulation = StringField(label='菜品分类编号', render_kw={"placeholder": "请输入菜品分类编号", "class": "form-control"})
     is_default = BooleanField(label='设为默认')

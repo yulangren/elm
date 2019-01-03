@@ -11,22 +11,22 @@
 <body>
 <div class="top">
   <!--  <div class="leftTiyle" id="flTitle">店铺管理中心</div> -->
-    <div class="thisUser">当前用户：{% if current_user.is_authenticated %}{{ current_user.username }}{% endif %}&nbsp;&nbsp;<a href="{{ url_for('.logout') }}">注销</a> </div>
+    <div class="thisUser">当前用户：{% if current_user.is_authenticated %}{{ current_user.username }}{% endif %}&nbsp;&nbsp;<a href="{{ url_for('cms_bp.logout') }}">注销</a> </div>
 </div>
 <div class="left">
     <div class="bigTitle">饿了吗后台管理系统</div>
     <div class="lines">
         <div onclick="pageClick(this)" class="active"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;<a
-                target="_self" href="/admin/">首 页</a>
+                target="_self" href="{{ url_for('cms_bp.end_index') }}">首 页</a>
         </div>
         <div onclick="pageClick(this)">
-            <span class="glyphicon glyphicon-th-large"></span>&nbsp;&nbsp;<a href="/add_shop/" target="_self">创建店铺</a>
+            <span class="glyphicon glyphicon-th-large"></span>&nbsp;&nbsp;<a href="{{ url_for('cms_bp.add_shop') }}" target="_self">创建店铺</a>
         </div>
         <div onclick="pageClick(this)">
-            <span class="glyphicon glyphicon-th-list"></span>&nbsp;&nbsp;<a href="/add_cate/" target="_self">菜品分类管理</a>
+            <span class="glyphicon glyphicon-th-list"></span>&nbsp;&nbsp;<a href="{{ url_for('cms_bp.add_cate') }}" target="_self">菜品分类管理</a>
         </div>
         <div onclick="pageClick(this)">
-            <span class="glyphicon glyphicon-cutlery"></span>&nbsp;&nbsp;<a href="/add_food/" target="_self">添加菜品管理</a>
+            <span class="glyphicon glyphicon-cutlery"></span>&nbsp;&nbsp;<a href="{{ url_for('cms_bp.add_food') }}" target="_self">添加菜品管理</a>
         </div>
         <div onclick="pageClick(this)">
             <span class="glyphicon glyphicon-calendar"></span>&nbsp;&nbsp;<a href="" target="_self">在售门店管理</a></div>
