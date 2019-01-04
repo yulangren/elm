@@ -3,7 +3,15 @@
 # @Time: 2018/12/29  22:17
 # @Author: 余浪人
 # @email: yulangren520@gmail.com
-# @Company: 
+# @Company:
+import datetime
+
+
+def get_redis():
+    from redis import Redis
+    r = Redis(host='205.209.163.171', port=6379, db=0, password=None, socket_connect_timeout=10)
+    return r
+
 
 class Dev_Base_Config():
     # 基础配置清单
@@ -15,7 +23,11 @@ class Dev_Base_Config():
 
 class Dev_CMS_Config(Dev_Base_Config):
     # 开发间段的配置清单
-    pass
+    SESSION_TYPE = "redis"
+    SESSION_REDIS = get_redis()
+    SESSION_USE_SIGNER = True  # 发送到浏览器上session的cookie值进行加密
+    SESSION_KEY_PREFIX = "elm"  # 保存到session中的值的前缀
+    PERMANENT_SESSION_LIFETIME = datetime.timedelta(seconds=30 * 60)  # 设置session过期时间
 
 
 class Production_CMS_Config(Dev_Base_Config):

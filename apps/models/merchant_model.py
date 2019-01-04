@@ -65,11 +65,11 @@ class Dishes_Class_Model(BaseModel):
 
 # 菜品详细模型
 class Dishes_Detail_Model(BaseModel):
-    goods_name = db.Column(db.String(length=16), comment='名称')
+    goods_name = db.Column(db.String(length=32), comment='名称')
     merchant_id = db.Column(db.INT, comment='所属商家ID')
     rating = db.Column(db.Float, default=5.0, comment='评分')
     shop_id = db.Column(db.String(16), comment='所属店铺ID')
-    category_id = db.Column(db.String(16), comment='所属分类ID')
+    category_id = db.Column(db.INT, comment='所属分类ID')
     goods_price = db.Column(db.Float, comment='价格')
     description = db.Column(db.String(length=250), comment='描述')
     month_sales = db.Column(db.Integer, default=0, comment='月销量')

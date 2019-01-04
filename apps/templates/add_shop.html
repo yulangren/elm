@@ -1,7 +1,16 @@
 {% extends 'base_end.html' %}
+{% block head_js %}
+    <script src="https://cdn.staticfile.org/Plupload/2.1.1/moxie.js"></script>
+    <script src="https://cdn.staticfile.org/Plupload/2.1.1/plupload.dev.js"></script>
+    <script src="https://cdn.staticfile.org/qiniu-js-sdk/1.0.14-beta/qiniu.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename="js/qiniu.js") }}"></script>
+    <script src="{{ url_for('static', filename="js/img_upload.js") }}"></script>
+{% endblock %}
 {% block context %}
     <div class="page-header"><h3>商家店铺{{ page_context }}</h3></div>
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
+
         {% for foo in form %}
             {% if foo.type == 'BooleanField' %}
                 <label class="radio-inline">{{ foo.label }}</label>&nbsp;&nbsp;{{ foo }}
@@ -16,6 +25,9 @@
         {% endfor %}
         <input type="submit" class="btn btn-primary btn-lg" style="padding: 10px 50px;margin-top: 30px"
                value="{{ page_context }}店铺">
-
+        <button id="upload-btn" class="btn btn-lg" style="padding: 10px 30px;margin-top: 30px">{{ page_context }}店铺图片
+        </button>
     </form>
+{% endblock %}
+{% block foot_js %}
 {% endblock %}

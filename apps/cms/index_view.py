@@ -5,11 +5,12 @@
 # @email: yulangren520@gmail.com
 
 from apps.cms import cms_bp
-from flask import request, render_template, redirect, url_for
+from flask import request, render_template, redirect, url_for, flash, jsonify
 from apps.forms.form import Business_reg, Login_Form
 from apps.libs.checks import check_shop
 from apps.libs.get_shop_uuid import get_shopUuid
 from apps.models import db
+from qiniu import Auth
 from apps.models.merchant_model import Merchant_User_Model, Shop_Model, Dishes_Class_Model, Dishes_Detail_Model
 from apps.cms.verify_view import check_password
 from apps.forms.shop_form import Shop_Form, Dishes_Class_Form, Dishes_Detail_Form
@@ -43,6 +44,7 @@ def login():
         else:
             if check_password(user.password, password=form.password.data):
                 login_user(user)
+                flash('恭喜你登录成功!正在跳转')
                 return redirect(url_for(endpoint='.end_index'))
             else:
                 form.password.errors = ('密码错误!',)
@@ -124,6 +126,8 @@ def add_cate():
 def show_cate(shop_uuid):
     shop_id = Shop_Model.query.filter_by(pub_id=shop_uuid, seller_id=current_user.id).first()  # 获取 店铺
     cate_data = Dishes_Class_Model.query.filter(Dishes_Class_Model.shop_id == shop_id.id).all()  # 获取分类
+    # for i in cate_data:
+    #     count.append(len(Dishes_Detail_Model.query.filter(Dishes_Detail_Model.category_id==str(i.id)).all()))
     return render_template('show_cate.html', cate_data=cate_data, shop_name=shop_id, cout=len(cate_data))
 
 
@@ -191,3 +195,14 @@ def update_food(id):
         result = db.session.query(Dishes_Class_Model).filter(Dishes_Class_Model.merchant_id == current_user.id).all()
         form.category_id.choices += [(r.id, r.name) for r in result]
     return render_template('add_food.html', form=form, page_context='更新')
+
+
+# 七牛云上传
+@cms_bp.route('/uptoken/', methods=['POST', 'GET'])
+@login_required
+def upload():
+    access_key = 'qBqgPsbc1ua-Llrjs1ArsSLGNvQ4adYio8Ja6fXl'
+    secret_key = 'UU2lag1W7elV6aAYM4LoBQoky03csPYTBBNQyZ8-'
+    q = Auth(access_key=access_key, secret_key=secret_key)
+    token = q.upload_token('elm-app')
+    return jsonify({"uptoken": token})

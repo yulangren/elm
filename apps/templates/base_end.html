@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static',filename='js/end_index.js') }}"></script>
+    {% block head_js %}{% endblock %}
 </head>
 <body>
 <div class="top">
@@ -43,5 +44,6 @@
         {% endblock %}
     </div>
 </div>
+{% block foot_js %}{% endblock %}
 </body>
 </html>

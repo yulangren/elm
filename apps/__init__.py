@@ -6,6 +6,7 @@
 
 
 from flask import Flask
+from flask_session import Session
 
 
 # 注册login服务
@@ -37,6 +38,8 @@ def create_app(config: str):
     app.config.from_object(config)
     # 注册数据库
     register_db(app=app)
+    # 注册session
+    # Session(app=app)
     # 调用注册蓝图
     register_cms_bp(app=app)
     # 注册用户登陆

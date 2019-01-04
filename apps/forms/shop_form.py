@@ -7,9 +7,6 @@
 
 from wtforms import Form, StringField, validators, BooleanField, FloatField, FileField, SelectField
 
-from apps.models.merchant_model import Shop_Model
-
-
 class Shop_Form(Form):
     shop_name = StringField(label='店铺名称', validators=[
         validators.DataRequired(message='店铺名称不能为空'),
@@ -28,7 +25,7 @@ class Shop_Form(Form):
                            render_kw={"placeholder": "请输入配送费用", "class": "form-control"})
     notice = StringField(label='店铺公告', render_kw={"placeholder": "请输入店铺公告", "class": "form-control"})
     discount = StringField(label='优惠信息', render_kw={"placeholder": "请输入优惠信息", "class": "form-control"})
-    shop_img = FileField(label='店铺图片', render_kw={"class": "btn "})
+    shop_img = StringField(label='', render_kw={"style":"display: none;"})
 
     # def validate_shop_name(self, object):
     #     cou = Shop_Model.query.filter(Shop_Model.shop_name == self.shop_name.data).count()
@@ -61,4 +58,4 @@ class Dishes_Detail_Form(Form):
                              render_kw={"placeholder": "请输入菜品价格", "class": "form-control"})
     description = StringField(label='菜品描述', render_kw={"placeholder": "请输入菜品描述", "class": "form-control"})
     tips = StringField(label='菜品提示', render_kw={"placeholder": "请输入菜品提示", "class": "form-control"})
-    goods_img = FileField(label='菜品图片', render_kw={'class': 'file '})
+    goods_img = StringField(label='', render_kw={"style":"display: none;"})

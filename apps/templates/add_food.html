@@ -1,6 +1,13 @@
 {% extends 'base_end.html' %}
+{% block head_js %}
+    <script src="https://cdn.staticfile.org/Plupload/2.1.1/moxie.js"></script>
+    <script src="https://cdn.staticfile.org/Plupload/2.1.1/plupload.dev.js"></script>
+    <script src="https://cdn.staticfile.org/qiniu-js-sdk/1.0.14-beta/qiniu.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename="js/qiniu.js") }}"></script>
+{% endblock %}
 {% block context %}
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
         <div class="page-header"><h3>商家菜品{{ page_context }}</h3></div>
         {% for foo in form %}
             <div class="form-group" style="text-align: right;">
@@ -12,5 +19,24 @@
         {% endfor %}
         <input type="submit" class="btn btn-primary btn-lg" style="padding: 10px 50px;margin-top: 30px"
                value="{{ page_context }}菜品">
+    <button id="upload-btn" class="btn btn-lg" style="padding: 10px 30px;margin-top: 30px">{{ page_context }}菜品图片
+        </button>
     </form>
+{% endblock %}
+{% block foot_js %}
+<script>
+window.onload = function () {
+    qiniu.setUp({
+        'domain': 'http://pksszbfpa.bkt.clouddn.com/',
+        'browse_btn': 'upload-btn',
+        'uptoken_url': '/uptoken/',
+        'success': function (up, file, info) {
+            let image_url = file.name;
+            let image_input = document.getElementById('goods_img');
+            image_input.value = image_url;
+        }
+    });
+};
+
+</script>
 {% endblock %}
