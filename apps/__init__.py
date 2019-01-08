@@ -6,7 +6,6 @@
 
 
 from flask import Flask
-from flask_session import Session
 
 
 # 注册login服务
@@ -31,7 +30,13 @@ def register_cms_bp(app: Flask):
     app.register_blueprint(cms_bp)
 
 
-# 创建APP
+# 注册API蓝图
+def register_api_bp(app: Flask):
+    from apps.apis import api_bp
+    app.register_blueprint(api_bp)
+
+
+# 创建商家后台APP
 def create_app(config: str):
     app = Flask(__name__)
     # 设置APP的配置文件
@@ -44,4 +49,17 @@ def create_app(config: str):
     register_cms_bp(app=app)
     # 注册用户登陆
     login_msg(app=app)
+    return app
+
+
+# 创建买家API接口app
+def create_api_app(config: str):
+    app = Flask(__name__, static_folder='./client', static_url_path='')
+    # api 配置文件
+    app.config.from_object(config)
+    # 注册数据库
+    register_db(app=app)
+    # 调用api蓝图
+    register_api_bp(app=app)
+
     return app

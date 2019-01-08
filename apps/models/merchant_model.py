@@ -17,9 +17,6 @@ class Merchant_User_Model(BaseModel, UserMixin):
 
     def __repr__(self):
         return f'商家用户: {self.username}'
-    # def get_id(self):
-    #     return self.username        # 设置用户名
-
 
 # 店铺模型
 class Shop_Model(BaseModel):
@@ -56,6 +53,7 @@ class Dishes_Class_Model(BaseModel):
     is_default = db.Column(db.Boolean, default=False, comment='是否是默认分类')
     category_id = db.Column(db.String(16), comment='分类UUID')
 
+
     def __repr__(self):
         return f'菜品分类: {self.name}'
 
@@ -69,7 +67,7 @@ class Dishes_Detail_Model(BaseModel):
     merchant_id = db.Column(db.INT, comment='所属商家ID')
     rating = db.Column(db.Float, default=5.0, comment='评分')
     shop_id = db.Column(db.String(16), comment='所属店铺ID')
-    category_id = db.Column(db.INT, comment='所属分类ID')
+    category_id = db.Column(db.Integer, db.ForeignKey(Dishes_Class_Model.id), comment='所属分类ID')
     goods_price = db.Column(db.Float, comment='价格')
     description = db.Column(db.String(length=250), comment='描述')
     month_sales = db.Column(db.Integer, default=0, comment='月销量')
@@ -78,6 +76,7 @@ class Dishes_Detail_Model(BaseModel):
     satisfy_count = db.Column(db.Integer, comment='满意度数量')
     satisfy_rate = db.Column(db.Float, default=5.0, comment='满意度评分')
     goods_img = db.Column(db.String(length=250), comment='商品图片')
+    dishes_class = db.relationship('Dishes_Class_Model', backref='dishes_detail_model')
 
     def __repr__(self):
         return f'菜品详细: {self.goods_name}'

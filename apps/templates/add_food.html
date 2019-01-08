@@ -19,24 +19,27 @@
         {% endfor %}
         <input type="submit" class="btn btn-primary btn-lg" style="padding: 10px 50px;margin-top: 30px"
                value="{{ page_context }}菜品">
-    <button id="upload-btn" class="btn btn-lg" style="padding: 10px 30px;margin-top: 30px">{{ page_context }}菜品图片
+        <button id="upload-btn" class="btn btn-lg" style="padding: 10px 30px;margin-top: 30px">{{ page_context }}菜品图片
         </button>
+        <img id="img" src="" style="margin-top: 30px;">
     </form>
 {% endblock %}
 {% block foot_js %}
-<script>
-window.onload = function () {
-    qiniu.setUp({
-        'domain': 'http://pksszbfpa.bkt.clouddn.com/',
-        'browse_btn': 'upload-btn',
-        'uptoken_url': '/uptoken/',
-        'success': function (up, file, info) {
-            let image_url = file.name;
-            let image_input = document.getElementById('goods_img');
-            image_input.value = image_url;
-        }
-    });
-};
+    <script>
+        window.onload = function () {
+            qiniu.setUp({
+                'domain': 'http://pksszbfpa.bkt.clouddn.com/',
+                'browse_btn': 'upload-btn',
+                'uptoken_url': '/uptoken/',
+                'success': function (up, file, info) {
+                    let image_url = file.name;
+                    let image_input = document.getElementById('goods_img');
+                    image_input.value = image_url;
+                    let img = document.getElementById('img');
+                    img.setAttribute('src', image_url + '?imageView2/1/w/50/h/50/q/75|imageslim');
+                }
+            });
+        };
 
-</script>
+    </script>
 {% endblock %}

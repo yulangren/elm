@@ -36,6 +36,6 @@ class BaseModel(db.Model):
             return getattr(self, item)
 
 # 导入自定义数据模型
-from apps.models import merchant_model
+from apps.models import merchant_model,client_model
 
 

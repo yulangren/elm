@@ -15,3 +15,10 @@ def set_password(password):
 # 哈希验证密码的方式
 def check_password(set_password, password):
     return check_password_hash(pwhash=set_password, password=password)  # 验证成功返回True
+
+
+
+def redis():
+    import redis
+    r = redis.Redis(host='127.0.0.1', port=6379, db=6)
+    return r

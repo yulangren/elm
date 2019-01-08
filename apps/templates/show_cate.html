@@ -24,12 +24,13 @@
                     <th>
                         <a href="{{ url_for('.update_cate',class_uuid=data.category_id) }}">{{ data.name }}</a>
                     </th>
-                    <th><a href="{{ url_for('cms_bp.add_food') }}">添加</a> &nbsp;&nbsp;<span class="badge">{{ cout }}</span></th>
-                    <th> 0.00</th>
+                    <th><a href="{{ url_for('cms_bp.add_food') }}">添加</a> <span class="badge" style="margin-left: 4px;">{{ data.dishes_detail_model|count }}</span></th>
+                    <th>
+                         {{ data.pre }}
+                    </th>
                     <th> {{ data.create_time }}</th>
                 </tr>
             {% endfor %}
-
 
             </tbody>
 

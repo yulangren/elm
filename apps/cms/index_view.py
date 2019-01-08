@@ -123,12 +123,15 @@ def add_cate():
 
 
 @cms_bp.route('/show_cate/<shop_uuid>', endpoint='show_cate')
+@login_required
 def show_cate(shop_uuid):
     shop_id = Shop_Model.query.filter_by(pub_id=shop_uuid, seller_id=current_user.id).first()  # 获取 店铺
     cate_data = Dishes_Class_Model.query.filter(Dishes_Class_Model.shop_id == shop_id.id).all()  # 获取分类
-    # for i in cate_data:
-    #     count.append(len(Dishes_Detail_Model.query.filter(Dishes_Detail_Model.category_id==str(i.id)).all()))
-    return render_template('show_cate.html', cate_data=cate_data, shop_name=shop_id, cout=len(cate_data))
+    su = [([pre.goods_price for pre in cate.dishes_detail_model]) for cate in cate_data]  # 获取当个分类下的价钱
+    pre = [sum(i) / len(i) for i in su]  # 以分类进行求和与平均
+    for c, p in zip(cate_data, pre):
+        c.pre = "%.2f" % p  # 保留两位小数
+    return render_template('show_cate.html', cate_data=cate_data, shop_name=shop_id)
 
 
 @cms_bp.route('/update_cate/<class_uuid>', endpoint='update_cate', methods=['GET', 'POST'])

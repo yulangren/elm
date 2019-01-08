@@ -10,7 +10,6 @@
 {% block context %}
     <div class="page-header"><h3>商家店铺{{ page_context }}</h3></div>
     <form action="" method="post" enctype="multipart/form-data">
-
         {% for foo in form %}
             {% if foo.type == 'BooleanField' %}
                 <label class="radio-inline">{{ foo.label }}</label>&nbsp;&nbsp;{{ foo }}
@@ -22,11 +21,14 @@
                     </div>
                 </div>
             {% endif %}
+
         {% endfor %}
         <input type="submit" class="btn btn-primary btn-lg" style="padding: 10px 50px;margin-top: 30px"
                value="{{ page_context }}店铺">
         <button id="upload-btn" class="btn btn-lg" style="padding: 10px 30px;margin-top: 30px">{{ page_context }}店铺图片
         </button>
+        <img id="img" src="" style="margin-top: 30px;">
+
     </form>
 {% endblock %}
 {% block foot_js %}

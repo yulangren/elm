@@ -6,7 +6,7 @@
 # @Company:
 from apps import create_app
 
-app = create_app('apps.setting.Production_CMS_Config')
+app = create_app('apps.setting.Dev_CMS_Config')
 
 
 if __name__ == '__main__':
