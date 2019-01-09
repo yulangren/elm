@@ -37,4 +37,4 @@ class Production_CMS_Config(Dev_Base_Config):
 
 class Dev_API_Config(Dev_CMS_Config):
     # 开发间段API的配置清单
-    REDIS_URL  ="redis：//：password @ localhost：6379/0"
+    pass
