@@ -5,11 +5,14 @@
 # @email: yulangren520@gmail.com
 import random
 import datetime
+import time
+
 from itsdangerous import TimedJSONWebSignatureSerializer
 from apps.apis import api_bp
 from apps.cms.verify_view import set_password, check_password
 from apps.forms.user_check import User_Form
-from apps.models.client_model import User, Address
+from apps.libs.get_uuid import get_uuid
+from apps.models.client_model import User, Address, OrderInfo, OrderGoods
 from apps.models.merchant_model import Shop_Model, db, Dishes_Class_Model, Dishes_Detail_Model
 from flask import jsonify, request, make_response, current_app
 from apps.apis.x_token import check_token
@@ -295,36 +298,81 @@ def add_cart():
     return jsonify(data)
 
 
-# 添加到订单
+# 添加到订单/订单详情
 @api_bp.route('/order/', endpoint='orders_detail', methods=['GET', 'POST'])
 def order():
+    user_tel = User.query.filter_by(id=request.cookies.get('uid')).first().tel  # 当前用户的手机号
+    r = current_app.config.get('SESSION_REDIS')  # 获取redis
     if request.method == "POST":
-        address_id = request.form.get('address_id')
-        data = {"status": "true", "message": "生成订单成功", "order_id": address_id}
-    else:
-        new_datatime = datetime.datetime.now()  # 获取当前时间
-        user_tel = User.query.filter_by(id=request.cookies.get('uid')).first().tel  # 当前用户的手机号
-        r = current_app.config.get('SESSION_REDIS')  # 获取redis
         cart_data = r.get('cart_' + user_tel).decode('utf-8')  # Redis购物车数据
-        address_id = request.args.get('id')  # 地址ID
-        add = Address.query.filter_by(id=int(address_id)).first()  # 地址
         obj = [(Dishes_Detail_Model.query.filter_by(id=int(j)).first(), int(x)) for j, x in eval(cart_data)]
-        data = {
-            "id": 1,
-            "order_code": "0000001",
-            "order_birth_time": new_datatime,
-            "order_status": "代付款",
-            "shop_id": "1",
-            "shop_name": "标题",
-            "shop_img": "/images/shop-logo.png",
-            "goods_list": [{
+        address_id = request.form.get('address_id')
+        address = Address.query.filter_by(id=int(address_id)).first()
+        addre = address.provence + address.city + address.area + address.detail_address
+        shop_pid = obj[0][0].shop_id  # 店铺pubID
+        code = str(int(time.time() * 1000)) + get_uuid()  # 订单ID
+        # 创建订单
+        or1 = OrderInfo(order_code=code, shop_pid=shop_pid,
+                        user_id=int(request.cookies.get('uid')), order_address=addre,
+                        order_price=sum([(x[0].goods_price * x[1]) for x in obj]))
+        db.session.add(or1)
+        db.session.commit()
+        OID = OrderInfo.query.filter_by(order_code=code).first().id  # 订单id
+        # 创建商品订单
+        for x in obj:
+            raw_data = {
+                "order_id": OID,
                 "goods_id": x[0].id,
                 "goods_name": x[0].goods_name,
                 "goods_img": x[0].goods_img,
+                "goods_price": x[0].goods_price,
                 "amount": x[1],
-                "goods_price": x[0].goods_price
-            } for x in obj],
-            "order_price": sum([(x[0].goods_price * x[1]) for x in obj]),
-            "order_address": add.provence + add.city + add.area + add.detail_address
+            }
+            order_goods = OrderGoods()
+            order_goods.set_attr(raw_data)  # 添加数据
+            db.session.add(order_goods)
+            db.session.commit()
+        data = {"status": "true", "message": "生成订单成功", "order_id": code}
+    else:
+        try:
+            r.delete('cart_' + user_tel)  # 删除Redis购物车
+        except:
+            pass
+        Order = OrderInfo.query.filter_by(order_code=request.args.get('id')).first()  # 订单
+        # 查询店铺
+        Shop = Shop_Model.query.filter_by(pub_id=Order.shop_pid).first()
+        data = {
+            "id": Order.id,
+            "order_code": Order.order_code,
+            "order_birth_time": Order.created_time.strftime('%Y-%m-%d %H:%M:%S'),
+            "order_status": "代付款",
+            "shop_id": Shop.id,
+            "shop_name": Shop.shop_name,
+            "shop_img": Shop.shop_img,
+            "goods_list": [{
+                "goods_id": x.goods_id,
+                "goods_name": x.goods_name,
+                "goods_img": x.goods_img,
+                "amount": x.amount,
+                "goods_price": x.goods_price
+            } for x in Order.ordergoods],
+            "order_price": Order.order_price,
+            "order_address": Order.order_address
         }
+    return jsonify(data)
+
+
+# 查看订单列表
+@api_bp.route('/orders/', endpoint='show_orders_list', methods=['GET'])
+def orders_list():
+    order_s = OrderInfo.query.all()
+    data = [{
+        "id": order.order_code,
+        "order_birth_time": order.created_time.strftime("%Y-%m-%d %H:%M"),
+        **dict(order),
+        "shop_name": order.shop.shop_name,
+        "shop_img": order.shop.shop_img,
+        "goods_list": [dict(x) for x in order.ordergoods],
+        "order_status": order.get_status(),
+    } for order in order_s]
     return jsonify(data)

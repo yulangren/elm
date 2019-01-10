@@ -34,7 +34,7 @@ class Shop_Model(BaseModel):
     send_cost = db.Column(db.Float, default=0.00, comment='配送费')
     notice = db.Column(db.String(length=128), comment='店公告')
     discount = db.Column(db.String(length=512), comment='优惠信息')
-    pub_id = db.Column(db.String(16), comment='店铺对外ID号')
+    pub_id = db.Column(db.String(16),unique=True, comment='店铺对外ID号')
 
     def __repr__(self):
         return f'店铺名称: {self.shop_name}'
