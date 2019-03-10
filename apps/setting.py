@@ -6,10 +6,15 @@
 # @Company:
 import datetime
 
+def get_database_uri():
+    import os
+
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return 'sqlite:///{}/elm.db'.format(base_dir)
 
 def get_redis():
     from redis import Redis
-    r = Redis(host='205.209.163.171', port=6379, db=0, password=None, socket_connect_timeout=10)
+    r = Redis(host='127.0.0.1', port=6379, db=0, password=None, socket_connect_timeout=10)
     return r
 
 
@@ -17,7 +22,8 @@ class Dev_Base_Config():
     # 基础配置清单
     DEBUG = True
     # 数据库配置
-    SQLALCHEMY_DATABASE_URI = "mysql+cymysql://root:248369@localhost:3306/elm"
+    # SQLALCHEMY_DATABASE_URI = "mysql+cymysql://root:248369@localhost:3306/elm"
+    SQLALCHEMY_DATABASE_URI=get_database_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 

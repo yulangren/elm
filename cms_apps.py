@@ -10,4 +10,7 @@ app = create_app('apps.setting.Dev_CMS_Config')
 
 
 if __name__ == '__main__':
-    app.run()
+    from apps.models import db
+    with app.app_context():
+        db.create_all()
+    app.run(host="0.0.0.0")

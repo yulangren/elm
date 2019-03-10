@@ -10,4 +10,7 @@ api_app = create_api_app('apps.setting.Dev_API_Config')
 
 
 if __name__ == '__main__':
+    from apps.models import db
+    with api_app.app_context():
+        db.create_all()
     api_app.run(port=8080)

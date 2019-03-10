@@ -16,7 +16,9 @@ from apps.cms.verify_view import check_password
 from apps.forms.shop_form import Shop_Form, Dishes_Class_Form, Dishes_Detail_Form
 from flask_login import login_user, login_required, logout_user, current_user
 from apps.libs.get_uuid import get_uuid
-
+@cms_bp.route('/',endpoint='index',methods=['GET'])
+def index():
+    return redirect(url_for(endpoint='.end_index'))
 
 # 商家用户注册
 @cms_bp.route('/reg_user/', endpoint='reg_user', methods=['GET', 'POST'])
@@ -92,7 +94,7 @@ def add_shop():
 def update_shop(update_shop_id):
     # 查询数据准备
     shop = Shop_Model.query.filter_by(pub_id=update_shop_id, seller_id=current_user.id).first()
-    # 验证是否存在,输入舒服非法
+    # 验证是否存在,输入是否非法
     check_shop(shop)
     form = Shop_Form(request.form)
     if request.method == "POST" and form.validate():
@@ -185,7 +187,7 @@ def show_food(shop_uuid):
 def update_food(id):
     # 查询数据准备
     food = Dishes_Detail_Model.query.filter_by(id=id, merchant_id=current_user.id).first()
-    # 验证是否存在,输入舒服非法
+    # 验证是否存在,输入是否非法
     check_shop(food)
     form = Dishes_Detail_Form(request.form)
     if request.method == "POST":
